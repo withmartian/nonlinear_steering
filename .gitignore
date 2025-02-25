@@ -2,3 +2,4 @@
 venv/
 k_ary_steering_dataset/
 .vast/
+.venv/
