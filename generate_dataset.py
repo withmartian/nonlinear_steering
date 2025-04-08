@@ -9,6 +9,10 @@ from datetime import datetime
 import logging
 from huggingface_hub import HfApi
 import re
+from dotenv import load_dotenv
+import os
+
+load_dotenv()
 
 # Set up logging
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
@@ -17,7 +21,7 @@ logger = logging.getLogger(__name__)
 # Set up argument parser
 parser = argparse.ArgumentParser(description='Generate AI prompts with tones using OpenAI')
 parser.add_argument('--output_dir', type=str, default='k_ary_steering_dataset', help='Directory to save dataset')
-parser.add_argument('--num_prompts', type=int, default=200, help='Total number of prompts to generate')
+parser.add_argument('--num_prompts', type=int, default=10000, help='Total number of prompts to generate')
 parser.add_argument('--openai_api_key', type=str, default=os.environ.get('OPENAI_API_KEY'), help='OpenAI API key')
 parser.add_argument('--openai_model', type=str, default="gpt-4o-mini", help='OpenAI model to use for generation')
 parser.add_argument('--seed', type=int, default=42, help='Random seed for reproducibility')
