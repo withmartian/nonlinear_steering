@@ -1,0 +1,11 @@
+Targets,K-Steering,CAA,DCT
+"Analogy Construction, Empirical Grounding",1.5023086e-07,3.6100275e-05,2.5570393e-05
+"Analogy Construction, Moral Framing",6.657958e-07,0.14655608,3.555417e-05
+"Analogy Construction, Reductio ad Absurdum",-2.6032393e-07,3.1947337e-05,3.85046e-05
+"Analogy Construction, Straw Man Reframing",4.3068962e-07,0.14054766,3.0979514e-05
+"Empirical Grounding, Moral Framing",1.4242018e-07,0.12676013,1.5839934e-05
+"Empirical Grounding, Reductio ad Absurdum",4.369134e-07,7.3685324e-06,2.8282404e-05
+"Empirical Grounding, Straw Man Reframing",8.1702046e-07,0.051252965,1.5482306e-05
+"Moral Framing, Reductio ad Absurdum",5.9173907e-08,0.10411993,3.7431717e-05
+"Moral Framing, Straw Man Reframing",0.079379536,0.06752489,1.3068318e-05
+"Reductio ad Absurdum, Straw Man Reframing",9.942893e-07,0.11131548,3.6649406e-05
