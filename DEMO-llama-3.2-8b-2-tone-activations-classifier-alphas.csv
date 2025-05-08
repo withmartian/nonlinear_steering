@@ -1,0 +1,4 @@
+Targets,alpha_grad,alpha_caa,best_k_layer,best_caa_layer
+"('cautious', 'empathetic')",11.095703125,6.3304687500000005,26,27
+"('cautious', 'expert')",12.595117187500001,7.327343750000001,26,27
+"('empathetic', 'expert')",14.09453125,6.5796875,26,27
