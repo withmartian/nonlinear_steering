@@ -1,0 +1,4 @@
+Targets,alpha_grad,alpha_caa,alpha_dct
+"('Analogy Construction', 'Reductio ad Absurdum')",0.001,3.0096950378417966,59.8441650390625
+"('Analogy Construction', 'Straw Man Reframing')",2.9306865234375,4.266491699218749,33.3467529296875
+"('Reductio ad Absurdum', 'Straw Man Reframing')",0.001,0.001,11.8488525390625
