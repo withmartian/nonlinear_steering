@@ -1,0 +1,21 @@
+Targets,alpha_grad,alpha_caa,alpha_dct
+"('Analogy Construction', 'Appeal to Precedent')",2.31171875,14.982266235351563,981.2541748046875
+"('Analogy Construction', 'Empirical Grounding')",1.9834167480468747,1.6251037597656253,193.3311279296875
+"('Analogy Construction', 'Reductio ad Absurdum')",0.22868347167968756,14.497543334960938,773.2744873046875
+"('Analogy Construction', 'Straw Man Reframing')",0.4496734619140625,11.149954223632815,919.2602294921876
+"('Appeal to Precedent', 'Analogy Construction')",2.821905517578125,2.4281249999999996,0.0
+"('Appeal to Precedent', 'Empirical Grounding')",2.26624755859375,1.9706848144531248,181.8322509765625
+"('Appeal to Precedent', 'Reductio ad Absurdum')",1.150384521484375,2.1066436767578125,73.09287109375
+"('Appeal to Precedent', 'Straw Man Reframing')",2.1443847656250004,0.158203125,144.3359130859375
+"('Empirical Grounding', 'Analogy Construction')",2.4294891357421875,2.5613555908203116,0.0
+"('Empirical Grounding', 'Appeal to Precedent')",0.3760101318359375,2.289437866210937,0.0
+"('Empirical Grounding', 'Reductio ad Absurdum')",1.0753570556640624,2.5431671142578116,173.583056640625
+"('Empirical Grounding', 'Straw Man Reframing')",0.57835693359375,2.8041717529296877,166.83371582031253
+"('Reductio ad Absurdum', 'Analogy Construction')",2.4099365234374996,3.0706329345703125,0.0
+"('Reductio ad Absurdum', 'Appeal to Precedent')",3.8686523437499996,1.16220703125,0.0
+"('Reductio ad Absurdum', 'Empirical Grounding')",1.4336700439453123,2.1957672119140623,0.0
+"('Reductio ad Absurdum', 'Straw Man Reframing')",0.7984375,1.0307952880859375,129.3373779296875
+"('Straw Man Reframing', 'Analogy Construction')",1.6555694580078124,2.948770141601562,0.0
+"('Straw Man Reframing', 'Appeal to Precedent')",0.17275390625,1.0103332519531252,0.0
+"('Straw Man Reframing', 'Empirical Grounding')",0.9812316894531249,2.540438842773437,0.0
+"('Straw Man Reframing', 'Reductio ad Absurdum')",3.5921874999999996,3.462594604492187,0.0

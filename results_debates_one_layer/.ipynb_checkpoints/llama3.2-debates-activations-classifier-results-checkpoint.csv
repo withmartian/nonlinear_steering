@@ -1,0 +1,21 @@
+Targets,K-Steering,CAA,DCT
+"Analogy Construction, Appeal to Precedent",0.8146329,0.80238724,0.22257337
+"Analogy Construction, Empirical Grounding",0.6836228,0.69216883,0.1432285
+"Analogy Construction, Reductio ad Absurdum",0.2899695,1.0887922,0.22288185
+"Analogy Construction, Straw Man Reframing",0.5700312,0.8096367,0.19634894
+"Appeal to Precedent, Analogy Construction",0.71578646,1.1976128,0.0
+"Appeal to Precedent, Empirical Grounding",0.22642708,0.887247,0.23443869
+"Appeal to Precedent, Reductio ad Absurdum",0.74959993,1.2421234,0.14749189
+"Appeal to Precedent, Straw Man Reframing",0.8340841,0.15003803,0.27419788
+"Empirical Grounding, Analogy Construction",1.1667136,1.0672939,0.0
+"Empirical Grounding, Appeal to Precedent",0.99497414,0.7725393,0.0
+"Empirical Grounding, Reductio ad Absurdum",1.1355631,1.2568421,0.2168859
+"Empirical Grounding, Straw Man Reframing",0.6485659,0.94799554,0.28095478
+"Reductio ad Absurdum, Analogy Construction",0.26688868,0.9112078,0.0
+"Reductio ad Absurdum, Appeal to Precedent",0.42092308,0.7008686,0.0
+"Reductio ad Absurdum, Empirical Grounding",0.49884218,0.7081454,0.0
+"Reductio ad Absurdum, Straw Man Reframing",0.21878266,0.5535457,0.2835586
+"Straw Man Reframing, Analogy Construction",0.85439646,1.1903535,0.0
+"Straw Man Reframing, Appeal to Precedent",0.9494495,0.14350447,0.0
+"Straw Man Reframing, Empirical Grounding",0.7640335,0.9471845,0.0
+"Straw Man Reframing, Reductio ad Absurdum",0.9791373,0.7641758,0.0
