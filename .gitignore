@@ -4,3 +4,4 @@ k_ary_steering_dataset/
 mood_questions_dataset/
 .vast/
 .venv/
+activations_cache/
