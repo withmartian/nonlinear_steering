@@ -5,7 +5,7 @@ import torch
 from datetime import datetime
 import numpy as np
 import random
-
+from torch import load as torch_load
 from transformer_lens import HookedTransformer, utils
 from transformers import AutoTokenizer
 from judges.debates_judge import DebateJudge
@@ -46,8 +46,6 @@ def run_alpha(alpha: float, target_style: str, avoid_style: str):
 
     judge = DebateJudge(api_key="your_key")
 
-    # Train a fresh classifier every time
-    from torch import load as torch_load
     all_activations = torch_load("debate_activations.pt", weights_only=False)
     debate_steer = MultiToneActivationSteering(input_dim=all_activations['reductio'].shape[1], num_classes=10)
     debate_steer.fit({
