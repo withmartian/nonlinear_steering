@@ -1,0 +1,360 @@
+{
+  "meta": {
+    "layer": 27,
+    "alphas": [
+      0.1,
+      0.2,
+      0.3,
+      0.4,
+      0.5,
+      0.6,
+      0.7,
+      0.8,
+      0.9,
+      1.0,
+      2.0,
+      2.5,
+      3.0,
+      3.5,
+      4.0,
+      4.5,
+      5.0,
+      5.5,
+      6.0,
+      6.5,
+      7.0,
+      7.5,
+      8.0,
+      8.5,
+      9.0,
+      9.5,
+      10.0,
+      11.0,
+      12.0,
+      13.0,
+      14.0,
+      15.0,
+      20.0,
+      25.0,
+      30.0
+    ],
+    "timestamp": "2025-05-14T02:31:13.311180"
+  },
+  "runs": [
+    {
+      "alpha": 0.1,
+      "success_rate": 0.1,
+      "average_strength": 0.3,
+      "details": {
+        "success_rate": 0.1,
+        "average_strength": 0.3
+      }
+    },
+    {
+      "alpha": 0.2,
+      "success_rate": 0.0,
+      "average_strength": 0.3,
+      "details": {
+        "success_rate": 0.0,
+        "average_strength": 0.3
+      }
+    },
+    {
+      "alpha": 0.3,
+      "success_rate": 0.0,
+      "average_strength": 0.3,
+      "details": {
+        "success_rate": 0.0,
+        "average_strength": 0.3
+      }
+    },
+    {
+      "alpha": 0.4,
+      "success_rate": 0.1,
+      "average_strength": 0.4,
+      "details": {
+        "success_rate": 0.1,
+        "average_strength": 0.4
+      }
+    },
+    {
+      "alpha": 0.5,
+      "success_rate": 0.3,
+      "average_strength": 1.4,
+      "details": {
+        "success_rate": 0.3,
+        "average_strength": 1.4
+      }
+    },
+    {
+      "alpha": 0.6,
+      "success_rate": 0.1,
+      "average_strength": 0.6,
+      "details": {
+        "success_rate": 0.1,
+        "average_strength": 0.6
+      }
+    },
+    {
+      "alpha": 0.7,
+      "success_rate": 0.2,
+      "average_strength": 0.7,
+      "details": {
+        "success_rate": 0.2,
+        "average_strength": 0.7
+      }
+    },
+    {
+      "alpha": 0.8,
+      "success_rate": 0.1,
+      "average_strength": 0.6,
+      "details": {
+        "success_rate": 0.1,
+        "average_strength": 0.6
+      }
+    },
+    {
+      "alpha": 0.9,
+      "success_rate": 0.1,
+      "average_strength": 0.8,
+      "details": {
+        "success_rate": 0.1,
+        "average_strength": 0.8
+      }
+    },
+    {
+      "alpha": 1.0,
+      "success_rate": 0.3,
+      "average_strength": 1.4,
+      "details": {
+        "success_rate": 0.3,
+        "average_strength": 1.4
+      }
+    },
+    {
+      "alpha": 2.0,
+      "success_rate": 0.4,
+      "average_strength": 1.7,
+      "details": {
+        "success_rate": 0.4,
+        "average_strength": 1.7
+      }
+    },
+    {
+      "alpha": 2.5,
+      "success_rate": 0.4,
+      "average_strength": 1.6,
+      "details": {
+        "success_rate": 0.4,
+        "average_strength": 1.6
+      }
+    },
+    {
+      "alpha": 3.0,
+      "success_rate": 0.4,
+      "average_strength": 1.7,
+      "details": {
+        "success_rate": 0.4,
+        "average_strength": 1.7
+      }
+    },
+    {
+      "alpha": 3.5,
+      "success_rate": 0.5,
+      "average_strength": 2.4,
+      "details": {
+        "success_rate": 0.5,
+        "average_strength": 2.4
+      }
+    },
+    {
+      "alpha": 4.0,
+      "success_rate": 0.6,
+      "average_strength": 2.0,
+      "details": {
+        "success_rate": 0.6,
+        "average_strength": 2.0
+      }
+    },
+    {
+      "alpha": 4.5,
+      "success_rate": 0.4,
+      "average_strength": 1.7,
+      "details": {
+        "success_rate": 0.4,
+        "average_strength": 1.7
+      }
+    },
+    {
+      "alpha": 5.0,
+      "success_rate": 0.3,
+      "average_strength": 1.8,
+      "details": {
+        "success_rate": 0.3,
+        "average_strength": 1.8
+      }
+    },
+    {
+      "alpha": 5.5,
+      "success_rate": 0.4,
+      "average_strength": 1.9,
+      "details": {
+        "success_rate": 0.4,
+        "average_strength": 1.9
+      }
+    },
+    {
+      "alpha": 6.0,
+      "success_rate": 0.5,
+      "average_strength": 2.0,
+      "details": {
+        "success_rate": 0.5,
+        "average_strength": 2.0
+      }
+    },
+    {
+      "alpha": 6.5,
+      "success_rate": 0.5,
+      "average_strength": 2.0,
+      "details": {
+        "success_rate": 0.5,
+        "average_strength": 2.0
+      }
+    },
+    {
+      "alpha": 7.0,
+      "success_rate": 0.5,
+      "average_strength": 2.1,
+      "details": {
+        "success_rate": 0.5,
+        "average_strength": 2.1
+      }
+    },
+    {
+      "alpha": 7.5,
+      "success_rate": 0.6,
+      "average_strength": 2.2,
+      "details": {
+        "success_rate": 0.6,
+        "average_strength": 2.2
+      }
+    },
+    {
+      "alpha": 8.0,
+      "success_rate": 0.4,
+      "average_strength": 2.1,
+      "details": {
+        "success_rate": 0.4,
+        "average_strength": 2.1
+      }
+    },
+    {
+      "alpha": 8.5,
+      "success_rate": 0.6,
+      "average_strength": 2.3,
+      "details": {
+        "success_rate": 0.6,
+        "average_strength": 2.3
+      }
+    },
+    {
+      "alpha": 9.0,
+      "success_rate": 0.5,
+      "average_strength": 1.9,
+      "details": {
+        "success_rate": 0.5,
+        "average_strength": 1.9
+      }
+    },
+    {
+      "alpha": 9.5,
+      "success_rate": 0.6,
+      "average_strength": 2.2,
+      "details": {
+        "success_rate": 0.6,
+        "average_strength": 2.2
+      }
+    },
+    {
+      "alpha": 10.0,
+      "success_rate": 0.5,
+      "average_strength": 2.3,
+      "details": {
+        "success_rate": 0.5,
+        "average_strength": 2.3
+      }
+    },
+    {
+      "alpha": 11.0,
+      "success_rate": 0.4,
+      "average_strength": 2.4,
+      "details": {
+        "success_rate": 0.4,
+        "average_strength": 2.4
+      }
+    },
+    {
+      "alpha": 12.0,
+      "success_rate": 0.5,
+      "average_strength": 2.2,
+      "details": {
+        "success_rate": 0.5,
+        "average_strength": 2.2
+      }
+    },
+    {
+      "alpha": 13.0,
+      "success_rate": 0.5,
+      "average_strength": 2.3,
+      "details": {
+        "success_rate": 0.5,
+        "average_strength": 2.3
+      }
+    },
+    {
+      "alpha": 14.0,
+      "success_rate": 0.4,
+      "average_strength": 1.8,
+      "details": {
+        "success_rate": 0.4,
+        "average_strength": 1.8
+      }
+    },
+    {
+      "alpha": 15.0,
+      "success_rate": 0.6,
+      "average_strength": 2.4,
+      "details": {
+        "success_rate": 0.6,
+        "average_strength": 2.4
+      }
+    },
+    {
+      "alpha": 20.0,
+      "success_rate": 0.6,
+      "average_strength": 2.5,
+      "details": {
+        "success_rate": 0.6,
+        "average_strength": 2.5
+      }
+    },
+    {
+      "alpha": 25.0,
+      "success_rate": 0.9,
+      "average_strength": 3.6,
+      "details": {
+        "success_rate": 0.9,
+        "average_strength": 3.6
+      }
+    },
+    {
+      "alpha": 30.0,
+      "success_rate": 0.4,
+      "average_strength": 2.2,
+      "details": {
+        "success_rate": 0.4,
+        "average_strength": 2.2
+      }
+    }
+  ]
+}
