@@ -1,17 +1,20 @@
-\begin{table}
+\begin{table}[H]
 \centering
-\caption{Steering scores for CAA and K-Steer across different avoid styles.}
-\label{tab:steering_scores}
-\begin{tabular}{lrr}
+\begin{tabular}{lcc}
 \toprule
-Avoid Style &  CAA Steering Score &  K-Steer Steering Score \\
+\textbf{Avoid Style} & \textbf{CAA} & \textbf{K-Steering} \\
 \midrule
-     burden &               0.371 &                   0.684 \\
-  empirical &               0.580 &                   0.636 \\
-   reductio &               0.432 &                   0.627 \\
-  precedent &               0.640 &                   0.551 \\
-    analogy &               0.451 &                   0.551 \\
- concession &               0.486 &                   0.384 \\
+analogy & 0.451 & \textbf{0.551} \\
+burden & 0.413 & \textbf{0.684} \\
+circular & 0.468 & \textbf{0.504} \\
+concession & \textbf{0.486} & 0.338 \\
+empirical & 0.570 & \textbf{0.690} \\
+moral & \textbf{0.620} & 0.570 \\
+precedent & \textbf{0.630} & 0.513 \\
+reductio & 0.432 & \textbf{0.627} \\
+refutation & 0.567 & \textbf{0.700} \\
+strawman & \textbf{0.254} & 0.100 \\
 \bottomrule
 \end{tabular}
+\caption{Steering scores for Projection Removal (K-Steering Algorithm 2) versus Directional Ablation (CAA) across different avoid styles.}
 \end{table}

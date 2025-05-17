@@ -1,53 +1,47 @@
-import os
-import re
-import pandas as pd
+import json
 
-def extract_scores_from_file(file_path):
-    with open(file_path, "r", encoding="utf-8") as f:
-        content = f.read()
+def extract_scores(json_path):
+    with open(json_path, 'r') as f:
+        data = json.load(f)
 
-    combinations = content.split("### Selected Style: Avoid = ")[1:]
-    data = []
+    rows = []
+    for combo in data["combinations"]:
+        avoid_style = combo["avoid_style"]
+        caa_score = combo.get("caa_steering_score", 0.0)
+        k_score = combo.get("k_steer_steering_score", 0.0)
+        rows.append((avoid_style, caa_score, k_score))
+    
+    # Sort alphabetically by avoid style for consistency
+    rows.sort()
 
-    for block in combinations:
-        match_avoid = re.match(r"([a-zA-Z_]+) ###", block)
-        avoid_style = match_avoid.group(1) if match_avoid else "unknown"
+    return rows
 
-        caa_score_match = re.search(r"'caa_steering_score': ([0-9.]+)", block)
-        k_score_match = re.search(r"'k_steer_steering_score': ([0-9.]+)", block)
+def generate_latex_table(rows):
+    latex = []
+    latex.append("\\begin{table}[H]")
+    latex.append("\\centering")
+    latex.append("\\begin{tabular}{lcc}")
+    latex.append("\\toprule")
+    latex.append("\\textbf{Avoid Style} & \\textbf{CAA} & \\textbf{K-Steering} \\\\")
+    latex.append("\\midrule")
+    
+    for avoid_style, caa_score, k_score in rows:
+        bold_caa = f"\\textbf{{{caa_score:.3f}}}" if caa_score > k_score else f"{caa_score:.3f}"
+        bold_k = f"\\textbf{{{k_score:.3f}}}" if k_score > caa_score else f"{k_score:.3f}"
+        latex.append(f"{avoid_style} & {bold_caa} & {bold_k} \\\\")
+    
+    latex.append("\\bottomrule")
+    latex.append("\\end{tabular}")
+    latex.append("\\caption{Steering scores for Projection Removal (K-Steering Algorithm 2) versus Directional Ablation (CAA) across different avoid styles.}")
+    latex.append("\\end{table}")
+    return "\n".join(latex)
 
-        caa_score = float(caa_score_match.group(1)) if caa_score_match else None
-        k_score = float(k_score_match.group(1)) if k_score_match else None
+# Example usage
+rows = extract_scores("/home/ubuntu/nonlinear_steering/results_all_layers_steering/gradient_projection/gradient_projection_results.json")  # Replace with your JSON file path
+latex_code = generate_latex_table(rows)
 
-        data.append({
-            "Avoid Style": avoid_style,
-            "CAA Steering Score": caa_score,
-            "K-Steer Steering Score": k_score,
-        })
+# Save to .tex
+with open("steering_scores_table.tex", "w") as f:
+    f.write(latex_code)
 
-    return pd.DataFrame(data)
-
-def generate_latex_table_from_folder(folder_path):
-    all_data = []
-
-    for filename in os.listdir(folder_path):
-        if filename.endswith(".txt"):
-            full_path = os.path.join(folder_path, filename)
-            df = extract_scores_from_file(full_path)
-            all_data.append(df)
-
-    if all_data:
-        final_df = pd.concat(all_data, ignore_index=True)
-        latex_table = final_df.to_latex(index=False, float_format="%.3f",
-                                        caption="Steering scores for CAA and K-Steer across different avoid styles.",
-                                        label="tab:steering_scores")
-        output_path = os.path.join(folder_path, "steering_scores_table.tex")
-        with open(output_path, "w", encoding="utf-8") as f:
-            f.write(latex_table)
-        return final_df, output_path
-    else:
-        return pd.DataFrame(), None
-
-df, latex_path = generate_latex_table_from_folder("/home/ubuntu/nonlinear_steering/results_all_layers_steering/gradient_projection")
-print(df)
-print(f"LaTeX saved to: {latex_path}")
+print(latex_code)
