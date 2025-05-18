@@ -1,0 +1,11 @@
+Targets,K-Steering,CAA,DCT
+"casual, cautious, concise",-0.0024677229,0.021659054,0.026887506
+"casual, cautious, empathetic",0.012777049,0.051056664,0.0019272566
+"casual, cautious, expert",-0.022758178,0.014915241,0.020313025
+"casual, concise, empathetic",0.21894044,0.16480954,0.023148783
+"casual, concise, expert",0.18245485,0.0055131405,0.006371338
+"casual, empathetic, expert",0.210233,0.04242251,0.020054609
+"cautious, concise, empathetic",0.031149458,0.036729578,-0.0002143681
+"cautious, concise, expert",0.03591151,0.02632066,0.022165209
+"cautious, empathetic, expert",0.027182147,0.021485716,-0.0047619045
+"concise, empathetic, expert",0.23157318,0.0518163,0.014851846

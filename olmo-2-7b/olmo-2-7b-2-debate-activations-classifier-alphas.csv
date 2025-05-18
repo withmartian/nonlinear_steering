@@ -1,0 +1,11 @@
+Targets,alpha_grad,alpha_caa,alpha_dct,best_k_layer,best_caa_layer
+"('Appeal to Precedent', 'Empirical Grounding')",16.5484375,1.969140625,80.0921875,30,29
+"('Appeal to Precedent', 'Moral Framing')",1.470703125,3.215234375,176.08281250000002,30,29
+"('Appeal to Precedent', 'Refutation by Distinction')",21.034375,0.224609375,368.0640625,30,29
+"('Appeal to Precedent', 'Straw Man Reframing')",27.015625,6.3304687500000005,46.0955078125,30,29
+"('Empirical Grounding', 'Moral Framing')",2.2806640624999996,4.835156250000001,352.065625,30,29
+"('Empirical Grounding', 'Refutation by Distinction')",30.00625,4.710546875,384.0625,30,29
+"('Empirical Grounding', 'Straw Man Reframing')",11.5640625,4.5859375,136.08671875,30,29
+"('Moral Framing', 'Refutation by Distinction')",2.5921875,3.090625,100.090234375,30,29
+"('Moral Framing', 'Straw Man Reframing')",17.046875,5.832031250000001,128.0875,30,29
+"('Refutation by Distinction', 'Straw Man Reframing')",5.832031250000001,4.212109375000001,320.06875,30,29
