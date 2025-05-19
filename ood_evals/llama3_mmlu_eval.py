@@ -1,8 +1,13 @@
 from deepeval.models.base_model import DeepEvalBaseLLM
 from transformers import AutoTokenizer, AutoModelForCausalLM
 from deepeval.benchmarks import MMLU
+
+import json
 import torch
 
+append_string = "Output A, B, C, or D. Full answer not needed. Answer:"
+all_prompts = []
+filename = "prompts_dump.json"
 class Llama32_3B_Model(DeepEvalBaseLLM):
     def __init__(self):
         self.device = "cuda"
@@ -21,6 +26,7 @@ class Llama32_3B_Model(DeepEvalBaseLLM):
         return self.model
 
     def generate(self, prompt: str) -> str:
+        all_prompts.append(prompt)
         model = self.load_model()
 
         model_inputs = self.tokenizer([prompt], return_tensors="pt").to(self.device)
@@ -28,7 +34,7 @@ class Llama32_3B_Model(DeepEvalBaseLLM):
         print(f"Retrieved {prompt_tokens} tokens")
 
         with torch.no_grad():
-            generated_ids = model.generate(**model_inputs)[0][prompt_tokens:]
+            generated_ids = model.generate(**model_inputs, do_sample=False)[0][prompt_tokens:]
 
         result = self.tokenizer.decode(generated_ids, skip_special_tokens=True).strip()[0]
         return result
@@ -43,7 +49,7 @@ class Llama32_3B_Model(DeepEvalBaseLLM):
         model_inputs = self.tokenizer(prompts, return_tensors="pt", padding=True).to(self.device)
 
         with torch.no_grad():
-            generated_ids = model.generate(**model_inputs, max_new_tokens=100, do_sample=True)
+            generated_ids = model.generate(**model_inputs, max_new_tokens=100, do_sample=False)
 
         return self.tokenizer.batch_decode(generated_ids, skip_special_tokens=True)
 
@@ -53,8 +59,12 @@ class Llama32_3B_Model(DeepEvalBaseLLM):
 if __name__ == "__main__":
     # Initialize model
     llm = Llama32_3B_Model()
-    benchmark = MMLU(n_problems_per_task=5, n_shots=3, confinement_instructions="""Output A, B, C, or D. Full answer not needed. Answer: """)
-
+    benchmark = MMLU(n_problems_per_task=3, n_shots=3, confinement_instructions=append_string)
     # Run MMLU benchmark
     benchmark.evaluate(model=llm)
-    benchmark.run()
+
+    print(f"We have {len(all_prompts)} prompts now")
+
+    with open(filename, "w") as f_out:
+        json.dump(all_prompts, f_out)
+
