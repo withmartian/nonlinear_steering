@@ -9,6 +9,7 @@ class Llama32_3B_Model(DeepEvalBaseLLM):
         self.model_id = "meta-llama/Llama-3.2-3B-Instruct"
         self.tokenizer = AutoTokenizer.from_pretrained(self.model_id)
         self.tokenizer.pad_token = self.tokenizer.eos_token
+        self.tokenizer.padding_size = "left"
         self.model = AutoModelForCausalLM.from_pretrained(
             self.model_id,
             torch_dtype=torch.bfloat16 if torch.cuda.is_available() else torch.float32,
@@ -23,14 +24,13 @@ class Llama32_3B_Model(DeepEvalBaseLLM):
         model = self.load_model()
 
         model_inputs = self.tokenizer([prompt], return_tensors="pt").to(self.device)
+        prompt_tokens =  len(model_inputs['input_ids'][0])
+        print(f"Retrieved {prompt_tokens} tokens")
 
         with torch.no_grad():
-            generated_ids = model.generate(**model_inputs, max_new_tokens=100)
+            generated_ids = model.generate(**model_inputs)[0][prompt_tokens:]
 
-        result = self.tokenizer.batch_decode(generated_ids, skip_special_tokens=True)[0].strip()
-        print(f'Prompt was \n{prompt[:100]}')
-        print(f'Generated ids were {generated_ids}')
-        print(f'Result was \n{result[:10]}')
+        result = self.tokenizer.decode(generated_ids, skip_special_tokens=True).strip()[0]
         return result
 
     async def a_generate(self, prompt: str) -> str:
@@ -53,7 +53,7 @@ class Llama32_3B_Model(DeepEvalBaseLLM):
 if __name__ == "__main__":
     # Initialize model
     llm = Llama32_3B_Model()
-    benchmark = MMLU(n_shots=5, n_problems_per_task=1)
+    benchmark = MMLU(n_problems_per_task=5, n_shots=3, confinement_instructions="""Output A, B, C, or D. Full answer not needed. Answer: """)
 
     # Run MMLU benchmark
     benchmark.evaluate(model=llm)
