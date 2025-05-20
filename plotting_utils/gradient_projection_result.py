@@ -32,16 +32,16 @@ def generate_latex_table(rows):
     
     latex.append("\\bottomrule")
     latex.append("\\end{tabular}")
-    latex.append("\\caption{Steering scores for Projection Removal (K-Steering Algorithm 2) versus Directional Ablation (CAA) across different avoid styles.}")
+    latex.append("\\caption{Steering scores for Projection Removal (K-Steering Algorithm 2) versus Directional Ablation (CAA) across different avoid tones.}")
     latex.append("\\end{table}")
     return "\n".join(latex)
 
 # Example usage
-rows = extract_scores("/home/ubuntu/nonlinear_steering/results_all_layers_steering/gradient_projection/gradient_projection_results.json")  # Replace with your JSON file path
+rows = extract_scores("/home/ubuntu/nonlinear_steering/notebooks/tone_gradient_projection_results.json")  # Replace with your JSON file path
 latex_code = generate_latex_table(rows)
 
 # Save to .tex
-with open("steering_scores_table.tex", "w") as f:
+with open("tones_projection_removal_table.tex", "w") as f:
     f.write(latex_code)
 
 print(latex_code)
