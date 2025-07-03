@@ -11,14 +11,15 @@ client = OpenAI()
 
 # filename = "alpaca_llama-3.2-3b_1_empathetic.csv"
 # filename = "alpaca_llama-3.2-3b_2_casual-empathetic.csv"
-filename = "alpaca_llama-3.2-3b_3_cautious-concise-empathetic.csv"
+# filename = "alpaca_llama-3.2-3b_3_cautious-concise-empathetic.csv"
 
-# filename = "alpaca_mistral-7b_1_casual.csv"
-# filename = "alpaca_mistral-7b_2_cautious-expert.csv"
-# filename = "alpaca_mistral-7b_2_concise-empathetic.csv"
-# filename = "alpaca_olmo-2-7b_1_cautious.csv"
+# filename = "alpaca_mistral-7b_1_expert.csv"
+filename = "alpaca_mistral-7b_2_casual-cautious.csv"
+# filename = "alpaca_mistral-7b_2_casual-empathetic.csv"
+
+# filename = "alpaca_olmo-2-7b_1_empathetic.csv"
 # filename = "alpaca_olmo-2-7b_2_casual-concise.csv"
-# filename = "alpaca_olmo-2-7b_3_concise-empathetic-expert.csv"
+# filename = "alpaca_olmo-2-7b_3_casual-cautious-concise.csv"
 
 # Load prompts and responses from pandas
 
@@ -27,7 +28,9 @@ df = pd.read_csv(filename)
 data = df.to_dict(orient="records")[:100]
 
 results = []
-column_name = "k_steering"
+# column_name = "caa"
+# column_name = "k_steering"
+column_name = "unsteered"
 
 for item in tqdm(data):
     prompt = item["prompt"]
