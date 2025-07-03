@@ -5,13 +5,17 @@ from deepeval.benchmarks import MMLU
 import json
 import torch
 
+#model_name = "meta-llama/Llama-3.2-3B-Instruct"
+model_name = "allenai/OLMo-2-1124-7B-Instruct"
+print(f"Model name is {model_name}")
 append_string = "Output A, B, C, or D. Full answer not needed. Answer:"
 all_prompts = []
 filename = "prompts_dump.json"
-class Llama32_3B_Model(DeepEvalBaseLLM):
+
+class BaseLLMModel(DeepEvalBaseLLM):
     def __init__(self):
         self.device = "cuda"
-        self.model_id = "meta-llama/Llama-3.2-3B-Instruct"
+        self.model_id = model_name
         self.tokenizer = AutoTokenizer.from_pretrained(self.model_id)
         self.tokenizer.pad_token = self.tokenizer.eos_token
         self.tokenizer.padding_size = "left"
@@ -54,11 +58,11 @@ class Llama32_3B_Model(DeepEvalBaseLLM):
         return self.tokenizer.batch_decode(generated_ids, skip_special_tokens=True)
 
     def get_model_name(self):
-        return "LLaMA 3.2 3B Instruct"
+        return self.model_id
 
 if __name__ == "__main__":
     # Initialize model
-    llm = Llama32_3B_Model()
+    llm = BaseLLMModel()
     benchmark = MMLU(n_problems_per_task=3, n_shots=3, confinement_instructions=append_string)
     # Run MMLU benchmark
     benchmark.evaluate(model=llm)
@@ -67,4 +71,3 @@ if __name__ == "__main__":
 
     with open(filename, "w") as f_out:
         json.dump(all_prompts, f_out)
-
