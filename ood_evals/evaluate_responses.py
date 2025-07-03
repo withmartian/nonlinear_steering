@@ -2,16 +2,34 @@ import openai
 import csv
 import time
 import json
+import pandas as pd
 
+from openai import OpenAI
+from tqdm import tqdm
 
-# Load prompts and responses from JSON
-with open("prompts_and_responses.json", "r") as f:
-    data = json.load(f)
+client = OpenAI()
+
+# filename = "alpaca_llama-3.2-3b_1_empathetic.csv"
+# filename = "alpaca_llama-3.2-3b_2_casual-empathetic.csv"
+filename = "alpaca_llama-3.2-3b_3_cautious-concise-empathetic.csv"
+
+# filename = "alpaca_mistral-7b_1_casual.csv"
+# filename = "alpaca_mistral-7b_2_cautious-expert.csv"
+# filename = "alpaca_mistral-7b_2_concise-empathetic.csv"
+# filename = "alpaca_olmo-2-7b_1_cautious.csv"
+# filename = "alpaca_olmo-2-7b_2_casual-concise.csv"
+# filename = "alpaca_olmo-2-7b_3_concise-empathetic-expert.csv"
+
+# Load prompts and responses from pandas
+
+df = pd.read_csv(filename)
+
+data = df.to_dict(orient="records")[:100]
 
 results = []
-column_name = "response"
+column_name = "k_steering"
 
-for item in data:
+for item in tqdm(data):
     prompt = item["prompt"]
     response = item[column_name]
 
@@ -32,13 +50,13 @@ Return JSON like: {{ "text_quality": x, "helpfulness": y }}
 """
 
     try:
-        completion = openai.ChatCompletion.create(
-            model="gpt-4",
+        completion = client.chat.completions.create(
+            model="gpt-4o-mini",
             messages=[{"role": "user", "content": evaluation_prompt}],
             temperature=0,
         )
 
-        scores = completion.choices[0].message['content']
+        scores = str(completion.choices[0].message.content).strip()
 
         # Attempt to parse JSON response
         scores_dict = json.loads(scores)
@@ -56,7 +74,6 @@ Return JSON like: {{ "text_quality": x, "helpfulness": y }}
         print(f"Error processing item: {e}")
         continue
 
-    time.sleep(1.2)  # Respect rate limits
 
 # Compute averages
 valid_results = [r for r in results if r["text_quality"] and r["helpfulness"]]
@@ -65,9 +82,10 @@ avg_hp = sum(r["helpfulness"] for r in valid_results) / len(valid_results)
 
 print(f"\nAverage Text Quality: {avg_tq:.2f}")
 print(f"Average Helpfulness: {avg_hp:.2f}")
+print(f"Column type was {column_name} for {filename}")
 
 # Save to CSV
-with open("evaluated_responses.csv", "w", newline="") as f:
+with open(f"{filename}_evaluated_responses.csv", "w", newline="") as f:
     writer = csv.DictWriter(f, fieldnames=["prompt", "response", "text_quality", "helpfulness"])
     writer.writeheader()
     writer.writerows(results)
