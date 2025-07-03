@@ -1,3 +1,5 @@
+import argparse
+
 import asyncio, hashlib, math, os, random, sys, copy, gc, re, ast, json, uuid, html as _html
 from contextlib import contextmanager
 import collections
@@ -28,7 +30,6 @@ import ipywidgets as widgets
 from IPython.display import display, clear_output
 
 
-
 from pprint import pprint
 import numpy as np
 from pathlib import Path
@@ -40,7 +41,16 @@ torch.set_float32_matmul_precision('high')
 
 # model_name = "llama-3.2-3b"
 # model_name = "olmo-2-7b"
-model_name = "mistral-7b"
+# model_name = "mistral-7b"
+
+
+parser = argparse.ArgumentParser()
+parser.add_argument("--num_combo", type=int, required=True)
+parser.add_argument("--model_name", type=str, default="llama-3.2-3b")  # optionally make model name configurable
+args = parser.parse_args()
+
+model_name = args.model_name
+num_combo = args.num_combo
 
 def one_hot(idxs: np.ndarray, C: int) -> np.ndarray:
     out = np.zeros((len(idxs), C), dtype=np.float32)
@@ -611,7 +621,6 @@ def sample_steered_responses(
 
 
 model, tokenizer = get_model(model_name)
-num_combo = 2
 with open("prompts_dump.json", "r") as f_in:
     all_prompts = json.load(f_in)
 
@@ -625,4 +634,4 @@ results_df, tgt_list = sample_steered_responses(
 
 tgt_string = "-".join(tgt_list)
 
-results_df.to_csv(f"mmlu_{model_name}_{num_combo}_{tgt_string}.csv")
+results_df.to_csv(f"alpaca_{model_name}_{num_combo}_{tgt_string}.csv")
