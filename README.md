@@ -1,11 +1,6 @@
-# Nonlinear Steering (Refactored)
+# Beyond Linear Steering: Unified Multi-Attribute Control for Language Models
 
-This repository explores and benchmarks nonlinear steering methods for LLMs, including:
-- K-Steering (gradient-based activation steering)
-- CAA (Contrastive Activation Additions)
-- DCT-based steering vectors (Exponential DCT factors)
-
-The codebase has been modularized under `src/` with clear separation between steering primitives, utilities, evaluation flows, and judges.
+This repository accompanies the paper (Beyond Linear Steering: Unified Multi-Attribute Control for Language Models)[https://www.arxiv.org/abs/2505.24535], allowing for the results to be replicated.
 
 ## Installation
 
@@ -68,19 +63,13 @@ dct:
   max_seq_len: 48
 ```
 
-2) Run a quick intrinsic benchmark (activation deltas):
-
-```bash
-python -m src --config configs/bench.example.yaml
-```
-
-3) Run the full pipeline (calibration → evaluation → DCT → save results/plots):
+2) Run the full pipeline (calibration → evaluation → DCT → save results/plots):
 
 ```bash
 python -m src --config configs/bench.example.yaml --full
 ```
 
-4) Enable LLM-judge OOD calibration (requires OpenAI key):
+3) Enable LLM-judge OOD calibration (requires OpenAI key):
 
 ```bash
 python -m src --config configs/bench.example.yaml --full \
@@ -101,14 +90,3 @@ Outputs will be written to `results/` (CSVs and figures), and generated samples 
 - `--max-samples` – cap prompts used in evaluation
 - `--full` – run the full notebook-equivalent pipeline
 - Judge flags: `--judge-enabled`, `--judge-model`, `--judge-api-key`
-
-## Notes and tips
-
-- The tones task is implemented. If you need the debates task, open an issue or extend `src/utils/data.py` similarly to tones.
-- For faster experimentation, limit `layers` and `max_samples` in the YAML.
-- Static figure export requires `kaleido`.
-
-## Development
-
-- Code is structured for clarity and testability. Core steering logic lives under `src/steering/`; high-level orchestration and utilities are in `src/evals/` and `src/utils/`.
-- Feel free to contribute additional tasks, judges, or evaluation metrics.
