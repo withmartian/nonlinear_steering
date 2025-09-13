@@ -1,7 +1,0 @@
-combination,alpha,steps,success_rate,strength,steering_score
-burden_vs_reductio,4.2,1,1.0,4.0,0.8
-burden_vs_strawman,9.4,1,0.95,3.8,0.722
-empirical_vs_reductio,3.4,1,1.0,4.0,0.8
-precedent_vs_burden,3.8,1,1.0,4.05,0.8099999999999999
-reductio_vs_analogy,10.2,1,1.0,4.0,0.8
-reductio_vs_concession,6.2,1,0.9,3.25,0.5850000000000001

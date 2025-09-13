@@ -3,3 +3,5 @@ pandas
 numpy
 python-dotenv
 huggingface-hub
+PyYAML>=6.0
+tiktoken
