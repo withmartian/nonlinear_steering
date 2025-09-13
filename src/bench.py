@@ -202,7 +202,7 @@ async def run_full_pipeline(
             tgt_idx = [tone2idx[t] for t in combo]
             async def _gen_grad(a: float):
                 hook = get_gradient_hook(
-                    steer_model=ActivationSteering(input_dim=caa_vecs.shape[1], num_labels=len(unique_labels)),
+                    steer_module=ActivationSteering(input_dim=caa_vecs.shape[1], num_labels=len(unique_labels)),
                     target_labels=tgt_idx,
                     avoid_labels=[],
                     alpha=a,
@@ -236,7 +236,7 @@ async def run_full_pipeline(
     # Evaluate layers using calibrated alphas
     best_frames = {}
     for layer in layers:
-        df = await eval_steering_combinations(
+        df = eval_steering_combinations(
             prompts=eval_prompts,
             unique_labels=unique_labels,
             caa_vectors=caa_vecs if 'caa_vecs' in locals() else compute_caa_vectors(dataset, unique_labels, steer_layer=layer, tokenizer=tokenizer, model=model, device=device, max_pairs=100),
@@ -258,72 +258,74 @@ async def run_full_pipeline(
     df_best = best_frames[best_k_layer][2][["Targets", "K-Steering"]].copy()
     df_best["CAA"] = best_frames[best_caa_layer][2]["CAA"].values
 
-    # DCT phase
+    # DCT phase (optional)
     d = dct_params or {}
-    dct_vecs = compute_dct_vectors_for_layers(
-        model=model,
-        tokenizer=tokenizer,
-        dataset=dataset,
-        source_layer=best_caa_layer,
-        target_layer=best_caa_layer + int(d.get("offset", 4)),
-        num_samples=int(d.get("num_samples", 8)),
-        num_factors=int(d.get("num_factors", 128)),
-        max_seq_len=int(d.get("max_seq_len", 48)),
-        device=device,
-    )
-    base_act = get_hidden_cached(eval_prompts[: min(100, max_samples)], tokenizer=tokenizer, model=model, layer_idx=best_caa_layer, device=device)
-    tone2dct = await map_dct_vectors_to_labels(dct_vectors=dct_vecs, prompts=eval_prompts[: min(100, max_samples)], act_clf=act_clf_eval.classifier, layer_idx=best_caa_layer, base_act=base_act, unique_labels=unique_labels)
-    alpha2dct = await sweep_alphas_for_dct(
-        prompts=eval_prompts[: min(100, max_samples)],
-        unique_labels=unique_labels,
-        tone2dct=tone2dct,
-        dct_vectors=dct_vecs,
-        layer_idx=best_caa_layer,
-        model=model,
-        tokenizer=tokenizer,
-        judge=judge,
-        alpha_dct_guess=(0.1, 1024.0),
-        max_iters=8,
-        num_labels=2,
-    )
+    do_dct = bool(d.get("enabled", True))
+    if do_dct:
+        dct_vecs = compute_dct_vectors_for_layers(
+            model=model,
+            tokenizer=tokenizer,
+            dataset=dataset,
+            source_layer=best_caa_layer,
+            target_layer=best_caa_layer + int(d.get("offset", 4)),
+            num_samples=int(d.get("num_samples", 8)),
+            num_factors=int(d.get("num_factors", 128)),
+            max_seq_len=int(d.get("max_seq_len", 48)),
+            device=device,
+        )
+        base_act = get_hidden_cached(eval_prompts[: min(100, max_samples)], tokenizer=tokenizer, model=model, layer_idx=best_caa_layer, device=device)
+        tone2dct = await map_dct_vectors_to_labels(dct_vectors=dct_vecs, prompts=eval_prompts[: min(100, max_samples)], act_clf=act_clf_eval.classifier, layer_idx=best_caa_layer, base_act=base_act, unique_labels=unique_labels)
+        alpha2dct = await sweep_alphas_for_dct(
+            prompts=eval_prompts[: min(100, max_samples)],
+            unique_labels=unique_labels,
+            tone2dct=tone2dct,
+            dct_vectors=dct_vecs,
+            layer_idx=best_caa_layer,
+            model=model,
+            tokenizer=tokenizer,
+            judge=judge,
+            alpha_dct_guess=(0.1, 1024.0),
+            max_iters=8,
+            num_labels=2,
+        )
 
-    # Add DCT column
-    from ast import literal_eval
-    import pandas as pd
-    def _to_tuple(cell):
-        if isinstance(cell, str):
-            try:
-                return tuple(literal_eval(cell))
-            except Exception:
-                parts = [s.strip(" '\"") for s in cell.split(",")] if "," in cell else [cell]
-                return tuple(parts)
-        return tuple(cell)
+        # Add DCT column
+        from ast import literal_eval
+        import pandas as pd
+        def _to_tuple(cell):
+            if isinstance(cell, str):
+                try:
+                    return tuple(literal_eval(cell))
+                except Exception:
+                    parts = [s.strip(" '\"") for s in cell.split(",")] if "," in cell else [cell]
+                    return tuple(parts)
+            return tuple(cell)
 
-    device_t = next(act_clf_eval.classifier.parameters()).device
-    acts_np = get_hidden_cached(eval_prompts[: min(100, max_samples)], tokenizer=tokenizer, model=model, layer_idx=best_caa_layer, device=device)
-    acts_t = torch.tensor(acts_np, dtype=torch.float32, device=device_t)
-    with torch.no_grad():
-        base_logits = act_clf_eval.classifier(acts_t).sigmoid().cpu().numpy()
-
-    deltas = []
-    for raw in df_best["Targets"]:
-        combo = _to_tuple(raw)
-        tgt_idx = [unique_labels.index(t) for t in combo]
-        base_score = base_logits[:, tgt_idx].mean()
-        vec_ids = [vid for lbl in combo for vid in tone2dct.get(lbl, [])]
-        if not vec_ids:
-            deltas.append(0.0)
-            continue
-        vecs = dct_vecs[vec_ids]
-        vec = vecs.mean(0)
-        alpha = alpha2dct.get(combo, 0.0)
-        ste_np = acts_np + alpha * vec
-        ste_t = torch.tensor(ste_np, dtype=torch.float32, device=device_t)
+        device_t = next(act_clf_eval.classifier.parameters()).device
+        acts_np = get_hidden_cached(eval_prompts[: min(100, max_samples)], tokenizer=tokenizer, model=model, layer_idx=best_caa_layer, device=device)
+        acts_t = torch.tensor(acts_np, dtype=torch.float32, device=device_t)
         with torch.no_grad():
-            ste_logits = act_clf_eval.classifier(ste_t).sigmoid().cpu().numpy()
-        ste_score = ste_logits[:, tgt_idx].mean()
-        deltas.append(float(ste_score - base_score))
-    df_best["DCT"] = deltas
+            base_logits = act_clf_eval.classifier(acts_t).sigmoid().cpu().numpy()
+
+        deltas = []
+        for raw in df_best["Targets"]:
+            combo = _to_tuple(raw)
+            tgt_idx = [unique_labels.index(t) for t in combo]
+            base_score = base_logits[:, tgt_idx].mean()
+            vec_ids = [vid for lbl in combo for vid in tone2dct.get(lbl, [])]
+            if not vec_ids:
+                deltas.append(0.0)
+                continue
+            vecs = dct_vecs[vec_ids]
+            vec = vecs.mean(0)
+            alpha = alpha2dct.get(combo, 0.0)
+            ste_np = acts_np + alpha * vec
+            ste_t = torch.tensor(ste_np, dtype=torch.float32, device=device_t)
+            with torch.no_grad():
+                ste_logits = act_clf_eval.classifier(ste_t).sigmoid().cpu().numpy()
+            ste_score = ste_logits[:, tgt_idx].mean()
+            deltas.append(float(ste_score - base_score))
+        df_best["DCT"] = deltas
 
     # Save outputs
     results_dir = RESULTS_DIR

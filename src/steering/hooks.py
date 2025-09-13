@@ -20,7 +20,14 @@ def get_gradient_hook(
 
     @torch.inference_mode(False)
     def fwd_hook(module, inp, out):
-        h_fp16 = out[0]
+        # Support both tuple outputs and tensor outputs from decoder layers
+        if isinstance(out, tuple):
+            h_fp16 = out[0]
+            rest = out[1:]
+        else:
+            h_fp16 = out
+            rest = None
+
         B, S, D = h_fp16.shape
         h_current = h_fp16.reshape(-1, D).float()
         for step in range(steps):
@@ -45,7 +52,9 @@ def get_gradient_hook(
             else:
                 h_current = h_step.detach()
         h_new = h_current.reshape(B, S, D).to(h_fp16.dtype)
-        return (h_new,) + out[1:]
+        if rest is None:
+            return h_new
+        return (h_new,) + rest
 
     return fwd_hook
 
@@ -75,8 +84,13 @@ def get_additive_hook(vector: torch.Tensor | np.ndarray, *, alpha: float = 1.0):
         vector = torch.as_tensor(vector, dtype=torch.float16)
 
     def fwd_hook(module, inp, out):
-        h = out[0]
-        return (h + alpha * vector.to(h.device),) + out[1:]
+        if isinstance(out, tuple):
+            h = out[0]
+            rest = out[1:]
+            return (h + alpha * vector.to(h.device),) + rest
+        else:
+            h = out
+            return h + alpha * vector.to(h.device)
 
     return fwd_hook
 

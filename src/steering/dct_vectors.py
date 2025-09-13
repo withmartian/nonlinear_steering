@@ -27,9 +27,23 @@ def compute_dct_vectors_for_layers(
     import random
     prompts = random.sample([row["text"] for row in dataset], k=num_samples)
 
-    source_h = get_hidden(model, tokenizer, prompts, max_len=max_seq_len, layer_idx=source_layer, device=device).float()
+    source_h = get_hidden(
+        model,
+        tokenizer,
+        prompts,
+        max_len=max_seq_len,
+        layer_idx=source_layer,
+        device=device,
+    ).to(dtype=torch.float32)
 
     slice_model = make_slice(model, source_layer, target_layer, dtype=torch.float32)
+    # Ensure we always get hidden states as a structured output
+    try:
+        slice_model.config.output_hidden_states = True
+        slice_model.config.use_return_dict = True
+        slice_model.config.use_cache = False
+    except Exception:
+        pass
     last_layer_idx = len(slice_model.model.layers) - 1
 
     sliced = dct.SlicedModel(
@@ -39,7 +53,7 @@ def compute_dct_vectors_for_layers(
         layers_name="model.layers",
     )
 
-    target_h = sliced(source_h).float()
+    target_h = sliced(source_h).to(dtype=torch.float32)
     delta_single = dct.DeltaActivations(sliced, target_position_indices=slice(-3, None))
 
     calibrator = dct.SteeringCalibrator(target_ratio=0.5)

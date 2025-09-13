@@ -1,0 +1,33 @@
+# Minimal full-pipeline config to test main evaluation with alpha binary search
+# Pass your API key via CLI: --judge-api-key $OPENAI_API_KEY
+
+model: unsloth/Llama-3.2-3B-Instruct
+task: tones
+
+# Run the full pipeline (calibration + evaluation + DCT)
+full: true
+
+# Keep layers minimal but allow picking a best layer
+layers: [-6]
+
+# Activation classifier eval layer
+# The code uses pick(args, cfg, "eval_layer", -1). Set explicitly here.
+eval_layer: -1
+
+# Keep runtime small
+max_samples: 1
+
+# Enable judge so alpha calibration uses binary search per layer/target combo
+judge:
+  enabled: true
+  model: gpt-4o-mini
+  # prompt: (optional) use default in code
+  # api_key: set via --judge-api-key CLI flag, not here
+
+# DCT params kept tiny just to exercise the path
+# (DCT runs after picking the best layer from K-Steering/CAA)
+dct:
+  offset: 2
+  num_samples: 4
+  num_factors: 32
+  max_seq_len: 32

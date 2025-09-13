@@ -5,3 +5,7 @@ python-dotenv
 huggingface-hub
 PyYAML>=6.0
 tiktoken
+datasets
+transformers
+scikit-learn
+plotly

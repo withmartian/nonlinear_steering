@@ -5,7 +5,7 @@ from typing import List, Optional
 
 import numpy as np
 
-from .activations import get_hidden_cached
+from src.utils.features import get_hidden_cached
 
 
 def compute_caa_vectors(
