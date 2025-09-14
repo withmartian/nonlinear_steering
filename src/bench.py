@@ -347,7 +347,7 @@ def parse_args() -> argparse.Namespace:
     p = argparse.ArgumentParser(description="Benchmark steering methods on selected layers")
     p.add_argument("--config", type=str, default=None, help="Path to YAML config file")
     p.add_argument("--model", default=None, help="HF model id")
-    p.add_argument("--task", default=None, choices=["tones"], help="benchmark task")
+    p.add_argument("--task", default=None, choices=["tones", "debates"], help="benchmark task")
     p.add_argument(
         "--methods",
         nargs="+",

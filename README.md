@@ -1,6 +1,6 @@
 # Beyond Linear Steering: Unified Multi-Attribute Control for Language Models
 
-This repository accompanies the paper (Beyond Linear Steering: Unified Multi-Attribute Control for Language Models)[https://www.arxiv.org/abs/2505.24535], allowing for the results to be replicated.
+This repository accompanies the paper [Beyond Linear Steering: Unified Multi-Attribute Control for Language Models](https://www.arxiv.org/abs/2505.24535), allowing for the results to be replicated. The multi-layer evaluation from Section 5 of the paper is implemented in `src/`, and the code for other experiments is accessible in `notebooks/`.
 
 ## Installation
 
@@ -44,26 +44,9 @@ Some features (plot export, judge-based calibration) require optional deps and A
 
 ## Quickstart
 
-1) Prepare a config (edit `configs/bench.example.yaml` as needed):
+1) Set a yaml config in `configs/`. There is an example, minimal config that runs quickly available.
 
-```yaml
-model: unsloth/Llama-3.2-3B-Instruct
-task: tones
-methods: [k-steering, caa, dct]
-layers: [-2, -1]
-eval_layer: -1
-num_attributes: 1
-# target_labels: [casual, empathetic]
-max_samples: 100
-# DCT-specific params
-dct:
-  offset: 4
-  num_samples: 8
-  num_factors: 128
-  max_seq_len: 48
-```
-
-2) Run the full pipeline (calibration → evaluation → DCT → save results/plots):
+2) Run the full pipeline (calibrate alphas → find the optimal layer and alpha combination → save results/plots):
 
 ```bash
 python -m src --config configs/bench.example.yaml --full
