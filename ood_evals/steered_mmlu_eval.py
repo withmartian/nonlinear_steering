@@ -48,14 +48,14 @@ def parse_args():
     p.add_argument(
         "--model_name",
         type=str,
-        default="mistral-7b",
+        default="llama-3.2-3b",
         choices=["llama-3.2-3b", "olmo-2-7b", "mistral-7b"],
         help="Short model alias used by get_model() and output folders.",
     )
     p.add_argument(
         "--num_combo",
         type=int,
-        default=2,
+        default=1,
         choices=[1, 2, 3],
         help="Size of target tone combinations.",
     )
@@ -752,17 +752,6 @@ def sample_steered_responses_old(
               + r["caa"] + "\n")
     return df, tgt_list
 
-model, tokenizer = get_model(model_name)
-num_combo = 2
-
-with open("prompts_dump.json", "r") as f_in:
-    all_prompts = json.load(f_in)
-
-# Load all combos once
-combo_lookup_dict = get_alpha_file(model=model_name, dataset="tone", num_combo=num_combo)
-
-# Create output root: {model_name}/{num_combo}
-# --- replace your old bottom section with this ---
 def main():
     args = parse_args()
 
