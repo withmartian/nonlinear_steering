@@ -108,7 +108,8 @@ def run_mmlu_with_cache(
     # Try to extract a numeric score from result robustly.
     # Depending on deepeval version, result may be an object or a dict.
     score = None
-    for key in ("score", "overall_score", "accuracy"):
+    print(f"Result is {result}")
+    for key in ("score", "overall_score", "accuracy", "overall_accuracy"):
         if hasattr(result, key):
             score = getattr(result, key)
             break
@@ -142,8 +143,10 @@ def main():
     results: Dict[str, float] = {}
 
     for col in target_columns:
+        print(f"Processing column {col}")
         per_file_scores: List[float] = []
         for csv_path in csv_paths:
+            print(f"Processing path {csv_path}")
             df_dict = load_df_dict(csv_path, col)
             run_name = f"{col}:{csv_path.name}"
 
