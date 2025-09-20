@@ -38,7 +38,7 @@ class CacheReaderModel(DeepEvalBaseLLM):
         final_result = str(self.df_dict.get(prompt, "")).strip()
         # If your prompts included APPEND_STRING during generation and you want to
         # slice after it, uncomment the next line:
-        # final_result = after_x(final_result, APPEND_STRING).strip()
+        final_result = after_x(final_result, APPEND_STRING).strip()
         return final_result[:1] if final_result else ""
 
     async def a_generate(self, prompt: str) -> str:
