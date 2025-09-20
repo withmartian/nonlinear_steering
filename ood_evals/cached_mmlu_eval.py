@@ -141,7 +141,7 @@ def main():
     if not csv_paths:
         raise FileNotFoundError(f"No CSV files found under {csv_dir}")
 
-    target_columns = ["caa", "k_steering"]
+    target_columns = ["unsteered", "caa", "k_steering"]
     results: Dict[str, float] = {}
 
     for col in target_columns:
