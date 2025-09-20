@@ -108,7 +108,9 @@ def run_mmlu_with_cache(
     # Try to extract a numeric score from result robustly.
     # Depending on deepeval version, result may be an object or a dict.
     score = None
+
     print(f"Result is {result}")
+
     for key in ("score", "overall_score", "accuracy", "overall_accuracy"):
         if hasattr(result, key):
             score = getattr(result, key)
