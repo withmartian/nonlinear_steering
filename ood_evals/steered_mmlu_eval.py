@@ -231,7 +231,7 @@ def batch_generate(
         handle = target_layer.register_forward_hook(hook_fn)
 
     try:
-        for i in range(0, len(prompts), batch_size):
+        for i in tqdm(range(0, len(prompts), batch_size)):
             sub_prompts = prompts[i : i + batch_size]
             tok_in = tokenizer(
                 sub_prompts,
@@ -579,6 +579,8 @@ def sample_steered_responses(
     caa_hook = get_caa_hook(caa_vec, alpha=alpha_caa)
 
     # Generate
+
+    print("Generating unsteered texts")
     unsteered = batch_generate(
         model, tokenizer, prompts,
         layer_idx=layer_caa,   # consistent with your previous call pattern
@@ -586,6 +588,8 @@ def sample_steered_responses(
         max_new_tokens=max_new_tokens,
         batch_size=batch_size,
     )
+
+    print("Generating k-steered texts")
     ksteer = batch_generate(
         model, tokenizer, prompts,
         layer_idx=layer_k,
@@ -593,6 +597,8 @@ def sample_steered_responses(
         max_new_tokens=max_new_tokens,
         batch_size=batch_size,
     )
+
+    print("Generating caa texts")
     caa_out = batch_generate(
         model, tokenizer, prompts,
         layer_idx=layer_caa,
