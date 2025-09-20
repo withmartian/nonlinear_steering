@@ -515,7 +515,7 @@ def get_caa_hook(caa_vector: torch.Tensor | np.ndarray,
     return fwd_hook
 
 def get_alpha_file(model="llama-3.2-3b", dataset="tone", num_combo=1):
-    alpha_path = f"/workspace/nonlinear_steering/{model}/{model}-{str(num_combo)}-{dataset}-activations-classifier-alphas.csv"
+    alpha_path = f"/workspace/codes/nonlinear_steering/{model}/{model}-{str(num_combo)}-{dataset}-activations-classifier-alphas.csv"
     combo_lookup_table = pd.read_csv(alpha_path, converters={"Targets": literal_eval})
     combo_lookup_table["key"] = combo_lookup_table["Targets"].apply(lambda t: tuple(sorted(t)))
     combo_lookup_dict = combo_lookup_table.set_index("key").to_dict(orient="index")
