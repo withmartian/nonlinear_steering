@@ -38,9 +38,41 @@ from ast import literal_eval
 import random
 torch.set_float32_matmul_precision('high')
 
-# model_name = "llama-3.2-3b"
-# model_name = "olmo-2-7b"
-model_name = "mistral-7b"
+# --- add near the other imports ---
+import argparse
+from pathlib import Path
+
+# --- new: CLI args ---
+def parse_args():
+    p = argparse.ArgumentParser(description="Run steering over all combos and save per-combo CSVs.")
+    p.add_argument(
+        "--model_name",
+        type=str,
+        default="mistral-7b",
+        choices=["llama-3.2-3b", "olmo-2-7b", "mistral-7b"],
+        help="Short model alias used by get_model() and output folders.",
+    )
+    p.add_argument(
+        "--num_combo",
+        type=int,
+        default=2,
+        choices=[1, 2, 3],
+        help="Size of target tone combinations.",
+    )
+    p.add_argument(
+        "--dataset_name",
+        type=str,
+        default="tone",
+        choices=["tone", "debate"],
+        help="Which task/dataset loader to use.",
+    )
+    p.add_argument(
+        "--prompts_path",
+        type=Path,
+        default=Path("prompts_dump.json"),
+        help="Path to JSON list of prompts.",
+    )
+    return p.parse_args()
 
 def one_hot(idxs: np.ndarray, C: int) -> np.ndarray:
     out = np.zeros((len(idxs), C), dtype=np.float32)
@@ -489,7 +521,118 @@ def get_alpha_file(model="llama-3.2-3b", dataset="tone", num_combo=1):
     combo_lookup_dict = combo_lookup_table.set_index("key").to_dict(orient="index")
     return combo_lookup_dict
 
+
 def sample_steered_responses(
+    model,
+    tokenizer,
+    dataset_name: str,
+    num_combo: int,
+    prompts: list[str],
+    *,
+    target_tones: list[str],         # NEW: explicit targets for this run
+    steer_model_k = None,
+    layer_k: int,                    # NEW: explicit
+    alpha_grad: float,               # NEW: explicit
+    caa_vectors = None,
+    layer_caa: int,                  # NEW: explicit
+    alpha_caa: float,                # NEW: explicit
+    max_new_tokens: int = 32,
+    batch_size    : int = 8,
+):
+    dataset, eval_prompts, unique_labels = get_dataset(dataset_name)
+
+    # Train the classifier once per (layer_k) setting
+    clf_prompts  = [row["text"] for row in dataset]
+    clf_y  = np.array([unique_labels.index(row["label"]) for row in dataset], dtype=np.int64)
+    clf_x = get_hidden_cached(model=model, tokenizer=tokenizer, texts=clf_prompts, layer_idx=layer_k)
+
+    act_clf, acc = get_or_train_layer_clf(
+        unique_labels=unique_labels,
+        X=clf_x,
+        y=clf_y,
+        hidden_dim = 128,
+        epochs      = 5,
+        batch_size  = 32,
+    )
+
+    if steer_model_k is None:
+        steer_model_k = act_clf
+
+    if caa_vectors is None:
+        caa_vectors = compute_caa_vectors(
+            unique_labels=unique_labels,
+            steer_layer=layer_k,   # CAA based on same layer as classifier unless you have a reason to change
+            dataset=dataset,
+            model=model,
+            tokenizer=tokenizer
+        )
+
+    tone2idx = {t: i for i, t in enumerate(unique_labels)}
+    tgt_idx = [tone2idx[t] for t in target_tones]
+
+    # Hooks
+    grad_hook = get_gradient_hook(
+        steer_model_k, target_labels=tgt_idx,
+        avoid_labels=[], alpha=alpha_grad
+    )
+    caa_vec = caa_vectors[tgt_idx].mean(axis=0)
+    caa_hook = get_caa_hook(caa_vec, alpha=alpha_caa)
+
+    # Generate
+    unsteered = batch_generate(
+        model, tokenizer, prompts,
+        layer_idx=layer_caa,   # consistent with your previous call pattern
+        hook_fn=None,
+        max_new_tokens=max_new_tokens,
+        batch_size=batch_size,
+    )
+    ksteer = batch_generate(
+        model, tokenizer, prompts,
+        layer_idx=layer_k,
+        hook_fn=grad_hook,
+        max_new_tokens=max_new_tokens,
+        batch_size=batch_size,
+    )
+    caa_out = batch_generate(
+        model, tokenizer, prompts,
+        layer_idx=layer_caa,
+        hook_fn=caa_hook,
+        max_new_tokens=max_new_tokens,
+        batch_size=batch_size,
+    )
+
+    def _strip(gen: str, prompt: str) -> str:
+        return gen[len(prompt):].lstrip() if gen.startswith(prompt) else gen
+
+    rows = []
+    for p, base, ktxt, ctxt in zip(prompts, unsteered, ksteer, caa_out):
+        rows.append({
+            "prompt": p,
+            "unsteered": _strip(base, p),
+            "k_steering": _strip(ktxt, p),
+            "caa": _strip(ctxt, p),
+            "layer_k": layer_k,
+            "layer_caa": layer_caa,
+            "alpha_grad": alpha_grad,
+            "alpha_caa": alpha_caa,
+            "targets": ", ".join(sorted(target_tones)),
+        })
+
+    df = pd.DataFrame(rows)
+
+    for r in rows[:min(3, len(rows))]:  # brief console preview
+        print("\n" + "=" * 90)
+        print(f"PROMPT:\n{r['prompt']}\n")
+        print("- Unsteered -------------------------------------------------\n"
+              + r["unsteered"] + "\n")
+        print(f"- K-steering (layer {layer_k}, α_grad = {alpha_grad:.3g})\n"
+              + r["k_steering"] + "\n")
+        print(f"- CAA        (layer {layer_caa}, α_caa  = {alpha_caa:.3g})\n"
+              + r["caa"] + "\n")
+    return df
+
+
+def sample_steered_responses_old(
     model,
     tokenizer,
     dataset_name: str,
@@ -609,20 +752,65 @@ def sample_steered_responses(
               + r["caa"] + "\n")
     return df, tgt_list
 
-
 model, tokenizer = get_model(model_name)
 num_combo = 2
+
 with open("prompts_dump.json", "r") as f_in:
     all_prompts = json.load(f_in)
 
-results_df, tgt_list = sample_steered_responses(
-    model=model,
-    tokenizer=tokenizer,
-    prompts = all_prompts, # ["What is the answer to 1 + 1. Give only a number. Answer:"], #put in any list of prompts here
-    dataset_name = "tone",                  # dataset_name options ["tone", "debate"]
-    num_combo=num_combo                     # num_combo options [1,2,3]
-)
+# Load all combos once
+combo_lookup_dict = get_alpha_file(model=model_name, dataset="tone", num_combo=num_combo)
 
-tgt_string = "-".join(tgt_list)
+# Create output root: {model_name}/{num_combo}
+# --- replace your old bottom section with this ---
+def main():
+    args = parse_args()
 
-results_df.to_csv(f"mmlu_{model_name}_{num_combo}_{tgt_string}.csv")
+    model, tokenizer = get_model(args.model_name)
+
+    with open(args.prompts_path, "r") as f_in:
+        all_prompts = json.load(f_in)
+
+    combo_lookup_dict = get_alpha_file(
+        model=args.model_name, dataset=args.dataset_name, num_combo=args.num_combo
+    )
+
+    out_root = Path(f"{args.model_name}/{args.num_combo}")
+    out_root.mkdir(parents=True, exist_ok=True)
+
+    for combo_key, entry in combo_lookup_dict.items():
+        tgt_list  = list(combo_key)  # combo_key is a sorted tuple
+        tgt_str   = "-".join(tgt_list)
+
+        alpha_grad = float(entry["alpha_grad"])
+        layer_k    = int(entry["best_k_layer"])
+        alpha_caa  = float(entry["alpha_caa"])
+        layer_caa  = int(entry["best_caa_layer"])
+
+        print(
+            f"\n=== Running combo: {tgt_str} | "
+            f"K(layer={layer_k}, α={alpha_grad}) ; "
+            f"CAA(layer={layer_caa}, α={alpha_caa}) ==="
+        )
+
+        results_df = sample_steered_responses(
+            model=model,
+            tokenizer=tokenizer,
+            prompts=all_prompts,
+            dataset_name=args.dataset_name,
+            num_combo=args.num_combo,
+            target_tones=tgt_list,
+            layer_k=layer_k,
+            alpha_grad=alpha_grad,
+            layer_caa=layer_caa,
+            alpha_caa=alpha_caa,
+            max_new_tokens=32,
+            batch_size=8,
+        )
+
+        out_path = out_root / f"{tgt_str}.csv"
+        results_df.to_csv(out_path, index=False)
+        print(f"Saved: {out_path}")
+
+if __name__ == "__main__":
+    main()
