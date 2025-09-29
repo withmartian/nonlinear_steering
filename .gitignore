@@ -5,3 +5,42 @@ mood_questions_dataset/
 .vast/
 .venv/
 activations_cache/
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+*.egg-info/
+dist/
+build/
+
+# Jupyter
+.ipynb_checkpoints/
+
+# IDE/OS
+.DS_Store
+.vscode/
+.idea/
+
+# Project caches & artifacts
+hidden_cache/
+layer_clfs/*.pt
+llama_clfs/*.pt
+*.pt
+*.ckpt
+*.log
+logs/
+
+# Results and generated data
+results/
+data/generations/
+**/steered_generations_*.csv
+**/*-tone-activations-classifier-*.csv
+**/*-tone-activations-classifier-*.json
+
+# Local configs/keys
+.env.*
+api_keys.json
