@@ -1,6 +1,0 @@
-Targets,alpha_grad,alpha_caa,alpha_dct,best_k_layer,best_caa_layer
-"('casual',)",0.0,0.0,140.086328125,29,28
-"('cautious',)",0.0,0.0,44.095703125,29,28
-"('concise',)",0.0,0.0,32.096875,29,28
-"('empathetic',)",0.0,0.0,44.095703125,29,28
-"('expert',)",0.0,0.0,20.098046875,29,28
