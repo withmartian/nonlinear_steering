@@ -5,6 +5,6 @@ do
   for combo in 1 2 3
   do
     echo "Running for model_name=$model and num_combo=$combo"
-    python steered_alpaca_eval.py --num_combo $combo --model_name $model
+    python steered_mmlu_eval.py --num_combo $combo --model_name $model
   done
 done
